@@ -328,6 +328,9 @@ namespace Plugin.MediaManager.Abstractions.Implementations
             if (sender != CurrentPlaybackManager) return;
 
             MediaFinished?.Invoke(sender, e);
+            
+            if (MediaQueue.Repeat == RepeatType.None)
+                return;            
 
             if (MediaQueue.Repeat == RepeatType.RepeatOne)
             {
