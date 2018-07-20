@@ -134,7 +134,10 @@ namespace Plugin.MediaManager.MediaSession
         /// <param name="position"></param>
         public void UpdatePlaybackState(int state, int position = 0, string errorMessage = "")
         {
-            if (CurrentSession == null && (_binder?.IsBinderAlive).GetValueOrDefault(false) && !string.IsNullOrWhiteSpace(_packageName))
+            if (CurrentSession == null 
+                && (_binder?.IsBinderAlive).GetValueOrDefault(false) 
+                && !string.IsNullOrWhiteSpace(_packageName)
+                && state!=PlaybackStateCompat.StateStopped)
                 InitMediaSession(_packageName, _binder);
 
             PlaybackStateCompat.Builder stateBuilder = new PlaybackStateCompat.Builder()
