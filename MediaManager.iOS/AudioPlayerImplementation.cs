@@ -242,6 +242,8 @@ namespace Plugin.MediaManager
             });
         }
 
+        NSObject observer = null;
+
         public async Task Play(IMediaFile mediaFile = null)
         {
             var sameMediaFile = mediaFile == null || mediaFile.Equals(_currentMediaFile);
@@ -281,7 +283,10 @@ namespace Plugin.MediaManager
                     StatusObservationContext.Handle);
 
 
-                NSNotificationCenter.DefaultCenter.AddObserver(AVPlayerItem.DidPlayToEndTimeNotification,
+                if (observer != null)
+                    NSNotificationCenter.DefaultCenter.RemoveObserver(observer, AVPlayerItem.DidPlayToEndTimeNotification, CurrentItem);
+
+                observer = NSNotificationCenter.DefaultCenter.AddObserver(AVPlayerItem.DidPlayToEndTimeNotification,
                                                                notification => MediaFinished?.Invoke(this, new MediaFinishedEventArgs(mediaFile)), CurrentItem);
 
                 Player.Play();
@@ -400,5 +405,15 @@ namespace Plugin.MediaManager
                 BufferingChanged?.Invoke(this, new BufferingChangedEventArgs(0, TimeSpan.Zero));
             }
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (CurrentItem != null && observer != null)
+            {
+                NSNotificationCenter.DefaultCenter.RemoveObserver(observer, AVPlayerItem.DidPlayToEndTimeNotification, CurrentItem);
+            }
+            base.Dispose(disposing);
+        }        
+
     }
 }

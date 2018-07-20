@@ -329,6 +329,9 @@ namespace Plugin.MediaManager.Abstractions.Implementations
 
             MediaFinished?.Invoke(sender, e);
 
+            if (MediaQueue.Repeat == RepeatType.None)
+                return;            
+
             if (MediaQueue.Repeat == RepeatType.RepeatOne)
             {
                 await Seek(TimeSpan.Zero);
